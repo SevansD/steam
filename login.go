@@ -82,26 +82,25 @@ func (session *Session) proceedDirectLogin(response *LoginResponse, accountName,
 
 	req, err := http.NewRequest(
 		http.MethodPost,
-		"https://steamcommunity.com/login/dologin/?"+url.Values{
-			"captcha_text":      {""},
-			"captchagid":        {"-1"},
-			"emailauth":         {""},
-			"emailsteamid":      {""},
-			"password":          {base64.StdEncoding.EncodeToString(rsaOut)},
-			"remember_login":    {"true"},
-			"rsatimestamp":      {response.Timestamp},
-			"twofactorcode":     {twoFactorCode},
-			"username":          {accountName},
-			"oauth_client_id":   {"DE45CD61"},
-			"oauth_scope":       {"read_profile write_profile read_client write_client"},
-			"loginfriendlyname": {"#login_emailauth_friendlyname_mobile"},
-			"donotcache":        {strconv.FormatInt(time.Now().Unix()*1000, 10)},
-		}.Encode(),
+		"https://steamcommunity.com/login/dologin/",
 		nil,
 	)
 	if err != nil {
 		return err
 	}
+	req.Form.Add("captcha_text", "")
+	req.Form.Add("captchagid", "-1")
+	req.Form.Add("emailauth", "")
+	req.Form.Add("emailsteamid", "")
+	req.Form.Add("password", base64.StdEncoding.EncodeToString(rsaOut))
+	req.Form.Add("remember_login", "true")
+	req.Form.Add("rsatimestamp", response.Timestamp)
+	req.Form.Add("twofactorcode", twoFactorCode)
+	req.Form.Add("username", accountName)
+	req.Form.Add("oauth_client_id", "DE45CD61")
+	req.Form.Add("oauth_scope", "read_profile write_profile read_client write_client")
+	req.Form.Add("loginfriendlyname", "#login_emailauth_friendlyname_mobile")
+	req.Form.Add("donotcache", strconv.FormatInt(time.Now().Unix()*1000, 10))
 
 	req.Header.Add("X-Requested-With", httpXRequestedWithValue)
 	req.Header.Add("Referer", "https://steamcommunity.com/mobilelogin?oauth_client_id=DE45CD61&oauth_scope=read_profile%20write_profile%20read_client%20write_client")
